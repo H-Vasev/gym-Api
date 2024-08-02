@@ -19,12 +19,34 @@ namespace gym_Api.Controllers
 
             foreach (var video in videosFiles)
             {
+                var description = string.Empty;
+                var duration = string.Empty;
+
                 var fileName = Path.GetFileName(video);
                 var videoUrl = $"https://localhost:7010/videos/{fileName}";
+
+                switch (fileName)
+                {
+                    case "video-01.mp4":
+                        description = "2 x 15";
+                        duration = "Times";
+                        break;
+                    case "video-02.mp4":
+                        description = "2 x 10";
+                        duration = "Times";
+                        break;
+                    default:
+                        description = "30";
+                        duration = "Seconds";
+                        break;
+                }
+
                 videos.Add(new VideoFile()
                 {
                     FileName = fileName,
-                    Url = videoUrl
+                    Url = videoUrl,
+                    Description = description,
+                    Duration = duration
                 });
             }
 
@@ -90,13 +112,13 @@ namespace gym_Api.Controllers
                 var itemToRemove = videos.FirstOrDefault(item => item.FileName == file.FileName);
                 videos.Remove(itemToRemove!);
 
-                var serializedVideos = JsonSerializer.Serialize(videos);      
+                var serializedVideos = JsonSerializer.Serialize(videos);
                 System.IO.File.WriteAllText(path, serializedVideos);
 
                 return Ok(new { message = file.FileName });
             }
 
-            return Ok(new {message = "The selected video does not exist!" });
+            return Ok(new { message = "The selected video does not exist!" });
         }
     }
 }
