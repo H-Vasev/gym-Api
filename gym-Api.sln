@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gym-Api", "gym-Api\gym-Api.csproj", "{57F94BE4-5EB3-4204-BE41-AA660A88D165}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gym-Api", "gym-Api\gym-Api.csproj", "{57F94BE4-5EB3-4204-BE41-AA660A88D165}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gym-Api.Infrastructure", "gym-Api.Infrastructure\gym-Api.Infrastructure.csproj", "{F7C99D04-0ED7-4328-8ED0-774A56446DFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{57F94BE4-5EB3-4204-BE41-AA660A88D165}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57F94BE4-5EB3-4204-BE41-AA660A88D165}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57F94BE4-5EB3-4204-BE41-AA660A88D165}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7C99D04-0ED7-4328-8ED0-774A56446DFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7C99D04-0ED7-4328-8ED0-774A56446DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7C99D04-0ED7-4328-8ED0-774A56446DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7C99D04-0ED7-4328-8ED0-774A56446DFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

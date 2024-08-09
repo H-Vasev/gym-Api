@@ -1,3 +1,6 @@
+using gym_Api.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace gym_Api
 {
     public class Program
@@ -5,6 +8,10 @@ namespace gym_Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(connectionString));
 
             // Add services to the container.
 
