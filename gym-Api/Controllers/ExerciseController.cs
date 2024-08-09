@@ -1,4 +1,5 @@
-﻿using gym_Api.Models;
+﻿using gym_Api.Core.Contracts;
+using gym_Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -7,50 +8,21 @@ namespace gym_Api.Controllers
 {
     [ApiController]
     [Route("/")]
-    public class TrainingController : Controller
+    public class ExerciseController : Controller
     {
-        [HttpGet("training")]
-        public IActionResult GetVideos()
+        private readonly IExerciseService exerciseService;
+
+        public ExerciseController(IExerciseService exerciseService)
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "videos");
-            var videosFiles = Directory.GetFiles(filePath, "*.mp4");
+            this.exerciseService = exerciseService;
+        }
 
-            var videos = new List<VideoFile>();
+        [HttpGet("allExercises")]
+        public async Task<IActionResult> GetAllExercises()
+        {
+            var exercises = await exerciseService.GetAllExercisesAsync();
 
-            foreach (var video in videosFiles)
-            {
-                var description = string.Empty;
-                var duration = string.Empty;
-
-                var fileName = Path.GetFileName(video);
-                var videoUrl = $"https://localhost:7010/videos/{fileName}";
-
-                switch (fileName)
-                {
-                    case "video-01.mp4":
-                        description = "2 x 15";
-                        duration = "Times";
-                        break;
-                    case "video-02.mp4":
-                        description = "2 x 10";
-                        duration = "Times";
-                        break;
-                    default:
-                        description = "30";
-                        duration = "Seconds";
-                        break;
-                }
-
-                videos.Add(new VideoFile()
-                {
-                    FileName = fileName,
-                    Url = videoUrl,
-                    Description = description,
-                    Duration = duration
-                });
-            }
-
-            return Ok(videos);
+            return Ok(exercises);
         }
 
         [HttpPost("selectVideo")]
