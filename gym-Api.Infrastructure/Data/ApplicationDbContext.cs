@@ -21,5 +21,7 @@ namespace gym_Api.Infrastructure.Data
         }
 
         public DbSet<Exercise> Exercises { get; set; } = null!;
+
+        public DbSet<SelectedExercise> SelectedExercises { get; set; } = null!;
     }
 }

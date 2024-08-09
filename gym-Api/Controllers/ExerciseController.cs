@@ -7,7 +7,7 @@ using System.Text.Json;
 namespace gym_Api.Controllers
 {
     [ApiController]
-    [Route("/")]
+    [Route("/exercise")]
     public class ExerciseController : Controller
     {
         private readonly IExerciseService exerciseService;
@@ -24,6 +24,14 @@ namespace gym_Api.Controllers
 
             return Ok(exercises);
         }
+
+        [HttpPost("addSelectedExercise")]
+        public async Task<IActionResult> AddSelectedExercise()
+        {
+            return Ok("");
+        }
+
+
 
         [HttpPost("selectVideo")]
         public IActionResult SaveAsSelected(VideoFile videoData)
