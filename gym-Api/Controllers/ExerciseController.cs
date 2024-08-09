@@ -1,4 +1,5 @@
 ﻿using gym_Api.Core.Contracts;
+using gym_Api.Core.Models;
 using gym_Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -26,43 +27,16 @@ namespace gym_Api.Controllers
         }
 
         [HttpPost("addSelectedExercise")]
-        public async Task<IActionResult> AddSelectedExercise()
+        public async Task<IActionResult> AddSelectedExercise(ExerciseViewModel model)
         {
-            return Ok("");
-        }
 
-
-
-        [HttpPost("selectVideo")]
-        public IActionResult SaveAsSelected(VideoFile videoData)
-        {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "SelectedVideos", "videosData.json");
-
-            List<VideoFile> videos;
-
-            if (System.IO.File.Exists(path))
+            var selectedExercise = await exerciseService.AddSelectedExerciseAsync(model);
+            if (selectedExercise == null)
             {
-                var existingData = System.IO.File.ReadAllText(path);
-                videos = JsonSerializer.Deserialize<List<VideoFile>>(existingData) ?? new List<VideoFile>();
-            }
-            else
-            {
-                videos = new List<VideoFile>();
+                return Ok(new { message = "The selected Exercise already exist!" });
             }
 
-            if (!videos.Any(i => i.FileName == videoData.FileName))
-            {
-                videos.Add(videoData);
-
-                var jsonData = JsonSerializer.Serialize(videos);
-                System.IO.File.WriteAllText(path, jsonData);
-            }
-            else
-            {
-                return Ok(new { message = "The selected video already exist!" });
-            }
-
-            return Ok(videoData);
+            return Ok(model);
         }
 
         [HttpGet("selectedVideos")]
