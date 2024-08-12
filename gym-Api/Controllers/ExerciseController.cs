@@ -39,6 +39,14 @@ namespace gym_Api.Controllers
             return Ok(model);
         }
 
+        [HttpGet("getSelectedVideos")]
+        public async Task<IActionResult> GetSelectedVideos()
+        {
+            var videos = await exerciseService.GetSelectedVideosAsync();
+
+            return Ok(videos);
+        }
+
         [HttpGet("selectedVideos")]
         public IActionResult GetSelectetVideos()
         {

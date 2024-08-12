@@ -5,6 +5,7 @@ using gym_Api.Core.Models;
 using gym_Api.Infrastructure.Data;
 using gym_Api.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace gym_Api.Core.Services
 {
@@ -58,6 +59,22 @@ namespace gym_Api.Core.Services
                 }).ToArrayAsync();
 
             return exercises;
+        }
+
+        public async Task<SelectedExercise[]> GetSelectedVideosAsync()
+        {
+            var selectedExercises = await dbContext.SelectedExercises
+                .AsNoTracking()
+                .Select(e => new SelectedExercise()
+                {
+                    Id = e.Id,
+                    FileName = e.FileName,
+                    Url = e.Url,
+                    Description = e.Description,
+                    Duration = e.Duration,
+                }).ToArrayAsync();
+
+            return selectedExercises;
         }
     }
 }
