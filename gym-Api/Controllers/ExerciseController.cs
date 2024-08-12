@@ -1,9 +1,6 @@
 ﻿using gym_Api.Core.Contracts;
 using gym_Api.Core.Models;
-using gym_Api.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Text.Json;
 
 namespace gym_Api.Controllers
 {
@@ -36,7 +33,7 @@ namespace gym_Api.Controllers
                 return Ok(new { message = "The selected Exercise already exist!" });
             }
 
-            return Ok(model);
+            return Ok(selectedExercise);
         }
 
         [HttpGet("getSelectedVideos")]
@@ -47,40 +44,17 @@ namespace gym_Api.Controllers
             return Ok(videos);
         }
 
-        [HttpGet("selectedVideos")]
-        public IActionResult GetSelectetVideos()
-        {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "SelectedVideos", "videosData.json");
-
-            var videosPath = System.IO.File.ReadAllText(path);
-            var videos = JsonSerializer.Deserialize<List<VideoFile>>(videosPath) ?? new List<VideoFile>();
-
-
-            return Ok(new { selectedVideos = videos });
-        }
-
-
         [HttpPost("removeSelectedVideo")]
-        public IActionResult RemoveSelectedVideo(VideoFile file)
+        public async Task<IActionResult> RemoveSelectedVideo([FromBody] int id)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "SelectedVideos", "videosData.json");
 
-            var videosPath = System.IO.File.ReadAllText(path);
-
-            var videos = JsonSerializer.Deserialize<List<VideoFile>>(videosPath);
-
-            if (videos != null && videos.Any(v => v.FileName == file.FileName))
+           var fileName = await exerciseService.RemoveSelectedItemAsync(id);
+            if (string.IsNullOrEmpty(fileName))
             {
-                var itemToRemove = videos.FirstOrDefault(item => item.FileName == file.FileName);
-                videos.Remove(itemToRemove!);
-
-                var serializedVideos = JsonSerializer.Serialize(videos);
-                System.IO.File.WriteAllText(path, serializedVideos);
-
-                return Ok(new { message = file.FileName });
+                return Ok(new { message = "Failed to remove the item. Please try againg later." });
             }
 
-            return Ok(new { message = "The selected video does not exist!" });
+            return Ok(new {message = fileName});
         }
     }
 }

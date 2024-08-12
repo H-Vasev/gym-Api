@@ -7,8 +7,10 @@ namespace gym_Api.Core.Contracts
     {
         public Task<ExerciseViewModel[]> GetAllExercisesAsync();
 
-        public Task<ExerciseViewModel?> AddSelectedExerciseAsync(ExerciseViewModel model);
+        public Task<SelectedExercise?> AddSelectedExerciseAsync(ExerciseViewModel model);
 
         public Task<SelectedExercise[]> GetSelectedVideosAsync();
+
+        public Task<string> RemoveSelectedItemAsync(int id);
     }
 }

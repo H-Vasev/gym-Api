@@ -18,7 +18,7 @@ namespace gym_Api.Core.Services
             this.dbContext = dbContext;
         }
 
-        public async Task<ExerciseViewModel?> AddSelectedExerciseAsync(ExerciseViewModel model)
+        public async Task<SelectedExercise?> AddSelectedExerciseAsync(ExerciseViewModel model)
         {
 
             var isExist = await dbContext.SelectedExercises
@@ -38,7 +38,7 @@ namespace gym_Api.Core.Services
                 await dbContext.SelectedExercises.AddAsync(exerciseToAdd);
                 await dbContext.SaveChangesAsync();
 
-                return model;
+                return exerciseToAdd;
             }
 
 
@@ -75,6 +75,23 @@ namespace gym_Api.Core.Services
                 }).ToArrayAsync();
 
             return selectedExercises;
+        }
+
+
+        public async Task<string> RemoveSelectedItemAsync(int id)
+        {
+            var itemToRemove = await dbContext.SelectedExercises
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if(itemToRemove != null)
+            {
+                dbContext.SelectedExercises.Remove(itemToRemove);  
+                await dbContext.SaveChangesAsync(); 
+
+                return itemToRemove.FileName;
+            }
+
+            return "";
         }
     }
 }
