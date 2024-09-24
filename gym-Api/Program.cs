@@ -1,7 +1,11 @@
 using gym_Api.Core.Contracts;
 using gym_Api.Core.Services;
 using gym_Api.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace gym_Api
 {
@@ -14,6 +18,28 @@ namespace gym_Api
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                    };
+                });
+
+            builder.Services.AddAuthorization();
 
             // Add services to the container.
 
@@ -47,6 +73,7 @@ namespace gym_Api
 
             app.UseStaticFiles();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
