@@ -17,7 +17,7 @@ namespace gym_Api.Controllers
         private IConfiguration configuration;
 
         public AccountController(
-            UserManager<IdentityUser> userManager, 
+            UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             IConfiguration configuration)
         {
@@ -29,20 +29,15 @@ namespace gym_Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
-            if(string.IsNullOrWhiteSpace(model.Email))
+            if (!ModelState.IsValid)
             {
-                return BadRequest();
-            }
-
-            if(model.Password != model.ConfirmPassword)
-            {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             var isExist = userManager.FindByEmailAsync(model.Email);
             if (isExist.Result != null)
             {
-                return BadRequest($"A user with the email address: {model.Email} already exists.Please use a different email address.");
+                return Ok($"A user with the email address: {model.Email} already exists.Please use a different email address.");
             }
 
             var accountUser = new IdentityUser()
@@ -52,16 +47,39 @@ namespace gym_Api.Controllers
             };
 
             var result = await userManager.CreateAsync(accountUser, model.Password);
-            if (result.Succeeded) 
+            if (!result.Succeeded)
             {
-                await signInManager.SignInAsync(accountUser, isPersistent: false);
-
-                var token = GenerateJwtToken(accountUser);
-
-                return Ok(new {Result = "Registration successful", Token = token});
+                return BadRequest("Error occure during register!");
             }
 
-            return BadRequest();
+            var token = GenerateJwtToken(accountUser);
+
+            return Ok(new { Message = "Registration successful", Username = accountUser.Email, Token = token });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LogIn([FromBody] LogInViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return Ok("User with provided email do not exist!");
+            }
+
+            var result = await signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
+            if (!result.Succeeded)
+            {
+                return Unauthorized("Invalid Password!");
+            }
+
+            var token = GenerateJwtToken(user);
+
+            return Ok(new { message = "Login successfully!", userName = user.UserName, token = token });
         }
 
         private string GenerateJwtToken(IdentityUser accountUser)
